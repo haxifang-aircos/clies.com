@@ -20,7 +20,7 @@ class CreateFollowersTable extends Migration
             $table->string('profile')->nullable()->comment('个人简介');
             $table->string('keywords', 64)->comment('关键词');
             $table->string('industry', 64)->nullable()->comment('所在行业');
-            $table->string('last_time')->nullable()->comment('最后一次发文链接');
+            $table->string('last_time')->nullable()->comment('最后一次发文时间');
             $table->integer('article')->default(0)->comment('文章数');
             $table->integer('platform')->comment('平台类型 1:知乎; 2:简书');
             $table->integer('followers')->default(0)->comment('关注者数');
