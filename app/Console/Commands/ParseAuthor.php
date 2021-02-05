@@ -248,7 +248,6 @@ class ParseAuthor extends Command
 
         curl_close($curl);
         $json = json_decode($response);
-        dd($json);
         return $json->data;
     }
 }
