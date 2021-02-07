@@ -9,14 +9,14 @@ use Symfony\Component\DomCrawler\Crawler;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 
-class ParseAuthor extends Command
+class ParseAuthorForZhiHu extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'parse:zhihuAuthor {topic} {--cycles=} {--index=1}';
+    protected $signature = 'parse:zhihuFollower {topic} {--cycles=} {--index=1}';
 
     /**
      * The console command description.
@@ -75,7 +75,7 @@ class ParseAuthor extends Command
                     continue;
                 }
 
-                $follower->followers = $this->getFollowerForZhiHu($homePrefixForZhihu . $item->url_token . '/posts'); // 被关注数
+                $follower->fans = $this->getFollowerForZhiHu($homePrefixForZhihu . $item->url_token . '/posts'); // 粉丝数
                 $follower->industry = $this->getIndustryForZhiHu($homePrefixForZhihu . $item->url_token); // 所在行业
 
                 $articles_count = (int) $this->getArticleForZhiHu($homePrefixForZhihu . $item->url_token . '/posts');
