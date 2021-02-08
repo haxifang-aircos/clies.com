@@ -53,11 +53,16 @@ class ParseFollowerForJianShu extends Command
             $followers = $this->getFollowers($sortId, $collection);
 
             for ($j = 0; $j < count($followers); $j++) {
+
                 $follower = new Follower();
+                $follower = $this->getHomeInfo($follower, $homePrefixForJianShu . $followers[$j]->slug);
+                if(empty($follower)) {
+                    continue;
+                }
+
                 $follower->keywords = $collection; // 关键词
                 $follower->home = $homePrefixForJianShu . $followers[$j]->slug; // 个人主页链接
                 $follower->platform = Follower::PLATFORM_JIANSHU; // 平台类型
-                $this->getHomeInfo($follower, $homePrefixForJianShu . $followers[$j]->slug);
 
                 // 下一个请求的 max_sort_id, 这里的 19 代表这次请求返回的关注者数据中, 最后一个用户的数据
                 if ($j == 19) {
@@ -139,6 +144,11 @@ class ParseFollowerForJianShu extends Command
     {
         $lastTime = null;
         $homeHTML = $this->sendRequest($homeUrl);
+        // 校验请求是否成功
+        if(empty($homeHTML)) {
+            return null;
+        }
+
         $homeCrawler = new Crawler($homeHTML);
 
         // 文章数
@@ -152,7 +162,12 @@ class ParseFollowerForJianShu extends Command
         if($follower->article != 0) {
             // 文章类型为置顶文章, 那么需要取第二篇文章
             if($homeCrawler->filterXPath('//*[@id="list-container"]/ul/li/div')->attr('class') != 'content  ') {
-                $lastTime = $homeCrawler->filterXPath('//*[@id="list-container"]/ul/li[2]/div/div/span[2]')->attr('data-shared-at');
+                // 判断文章的数量, 如果仅存在 1 篇置顶文章, 那么仍然取第一篇文章
+                if($follower->article == 1) {
+                    $lastTime = $homeCrawler->filterXPath('//*[@id="list-container"]/ul/li/div/div/span[2]')->attr('data-shared-at');
+                } else {
+                    $lastTime = $homeCrawler->filterXPath('//*[@id="list-container"]/ul/li[2]/div/div/span[2]')->attr('data-shared-at');
+                }
             } else {
                 $lastTime = $homeCrawler->filterXPath('//*[@id="list-container"]/ul/li/div/div/span[2]')->attr('data-shared-at');
             }
