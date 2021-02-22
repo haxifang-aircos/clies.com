@@ -91,6 +91,15 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'clues2'  => [
+            'driver'   => 'mysql',
+            'host'     => '127.0.0.1',
+            'port'     => 3306,
+            'database' => 'clues2',
+            'username' => 'root',
+            'password' => 'localdb001',
+        ],
+
     ],
 
     /*
