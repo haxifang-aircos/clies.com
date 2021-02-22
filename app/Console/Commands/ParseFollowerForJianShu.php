@@ -63,6 +63,7 @@ class ParseFollowerForJianShu extends Command
                 $follower->keywords = $collection; // 关键词
                 $follower->home = $homePrefixForJianShu . $followers[$j]->slug; // 个人主页链接
                 $follower->platform = Follower::PLATFORM_JIANSHU; // 平台类型
+                $follower->max_sort_id = $sortId; // 追踪重复数据关键字段
 
                 // 下一个请求的 max_sort_id, 这里的 19 代表这次请求返回的关注者数据中, 最后一个用户的数据
                 if ($j == 19) {
@@ -82,28 +83,28 @@ class ParseFollowerForJianShu extends Command
 
         switch ($collection) {
             case 'Java':
-                $collectionUrl = 'https://www.jianshu.com/collection/2099/subscribers?max_sort_id=' . $sortId;
+                $collectionUrl = 'https://www.jianshu.com/collection/248729/subscribers?max_sort_id=' . $sortId;
                 break;
             case '前端':
-                $collectionUrl = 'https://www.jianshu.com/collection/1084/subscribers?max_sort_id=' . $sortId;
+                $collectionUrl = 'https://www.jianshu.com/collection/229031/subscribers?max_sort_id=' . $sortId;
                 break;
             case '后端技术':
-                $collectionUrl = '';
+                $collectionUrl = 'https://www.jianshu.com/collection/294449/subscribers?max_sort_id=' . $sortId;
                 break;
             case 'ios':
-                $collectionUrl = '';
+                $collectionUrl = 'https://www.jianshu.com/collection/1276/subscribers?max_sort_id=' . $sortId;
                 break;
             case 'vscode':
                 $collectionUrl = '';
                 break;
             case '人工智能':
-                $collectionUrl = '';
+                $collectionUrl = 'https://www.jianshu.com/collection/502526/subscribers?max_sort_id=' . $sortId;
                 break;
             case 'android':
-                $collectionUrl = '';
+                $collectionUrl = 'https://www.jianshu.com/collection/284/subscribers?max_sort_id=' . $sortId;
                 break;
             case 'github':
-                $collectionUrl = '';
+                $collectionUrl = 'https://www.jianshu.com/collection/148/subscribers?max_sort_id=' . $sortId;
                 break;
             default:
                 throw new \Exception('话题未收录');
@@ -158,7 +159,8 @@ class ParseFollowerForJianShu extends Command
         // 收获喜欢
         $follower->thumb = $homeCrawler->filter('body > div.container.person > div > div.col-xs-16.main > div.main-top > div.info > ul > li:nth-child(5) > div > p')->text(); 
 
-        // 最后一次发文时间
+        // FIXME: 这里需要考虑简书平台脏数据的情况
+        // 最后一次发文时间 
         if($follower->article != 0) {
             // 文章类型为置顶文章, 那么需要取第二篇文章
             if($homeCrawler->filterXPath('//*[@id="list-container"]/ul/li/div')->attr('class') != 'content  ') {
@@ -211,6 +213,5 @@ class ParseFollowerForJianShu extends Command
             $this->error($targetUrl . ' 连接失败, 第' . $retry . '次重试');
             $this->sendRequest($targetUrl, $retry++);
         }
-
     }
 }
